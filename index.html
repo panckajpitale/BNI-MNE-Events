@@ -232,9 +232,14 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-top: 10px;
+      transition: background-color 0.2s;
     }
     .btn-submit:hover {
       background-color: var(--primary-hover);
+    }
+    .btn-submit:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
     }
 
     /* Success Banner */
@@ -408,7 +413,7 @@
             <input type="text" id="transactionId" required placeholder="e.g. 423984029384 or UPI ref no.">
           </div>
 
-          <button type="submit" class="btn-submit">Submit Registration</button>
+          <button type="submit" class="btn-submit" id="submitBtn">Submit Registration</button>
         </form>
       </div>
 
@@ -417,7 +422,7 @@
         <div class="success-icon">✓</div>
         <h2 style="color: var(--success); margin-bottom: 8px;">Registration Confirmed!</h2>
         <p style="color: var(--text-muted); margin-bottom: 20px;">
-          Your registration for ASCEND: Lead. Align. Accelerate. has been recorded.
+          Your registration for ASCEND: Lead. Align. Accelerate. has been successfully recorded in the master roster.
         </p>
         <button class="nav-btn" onclick="resetFormView()">Register Another Attendee</button>
       </div>
@@ -429,11 +434,12 @@
       <div class="card">
         <div class="admin-header">
           <div>
-            <h2 style="font-size: 20px;">Registered Attendees</h2>
-            <div style="font-size: 13px; color: var(--text-muted);" id="attendeeCount">Total: 0</div>
+            <h2 style="font-size: 20px;">Local Device Registrations</h2>
+            <div style="font-size: 13px; color: var(--text-muted);" id="attendeeCount">Total on this device: 0</div>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn-excel" onclick="exportToExcel()">📥 Download Excel (.xlsx)</button>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="https://docs.google.com/spreadsheets" target="_blank" class="nav-btn" style="text-decoration: none;">📊 Open Master Google Sheet</a>
+            <button class="btn-excel" onclick="exportToExcel()">📥 Download Local Excel</button>
             <button class="nav-btn" onclick="toggleOrganizerView()">Exit Admin</button>
           </div>
         </div>
@@ -463,7 +469,8 @@
   </div>
 
   <script>
-    const ADMIN_PIN = '1985'; // Change your admin pin here anytime
+    const ADMIN_PIN = '1985'; 
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzgZejs1jMoxk6NHSQ7XWOqiegpCozGMjYeW4PmI-VxQjshjmftSYXQIqooO2DCvuMx6Q/exec";
 
     function handleDeptChange() {
       const dept = document.getElementById('department').value;
@@ -487,9 +494,12 @@
       });
     }
 
-    function handleFormSubmit(e) {
+    async function handleFormSubmit(e) {
       e.preventDefault();
-      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Submitting Registration...";
+
       const newEntry = {
         name: document.getElementById('fullName').value.trim(),
         designation: document.getElementById('designation').value,
@@ -500,14 +510,32 @@
         timestamp: new Date().toLocaleString()
       };
 
-      // Save to localStorage
-      const list = JSON.parse(localStorage.getItem('bni_ascend_attendees') || '[]');
-      list.push(newEntry);
-      localStorage.setItem('bni_ascend_attendees', JSON.stringify(list));
+      try {
+        // Send data directly to Master Google Sheet
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(newEntry)
+        });
 
-      // Show success screen
-      document.getElementById('formCard').style.display = 'none';
-      document.getElementById('successCard').style.display = 'block';
+        // Backup locally on the browser
+        const list = JSON.parse(localStorage.getItem('bni_ascend_attendees') || '[]');
+        list.push(newEntry);
+        localStorage.setItem('bni_ascend_attendees', JSON.stringify(list));
+
+        // Switch to Confirmation view
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successCard').style.display = 'block';
+      } catch (err) {
+        console.error("Submission error:", err);
+        alert("There was an issue saving to the server, but your local entry was saved. Please ensure you have internet connectivity.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit Registration";
+      }
     }
 
     function resetFormView() {
@@ -542,11 +570,11 @@
     function renderAttendees() {
       const list = JSON.parse(localStorage.getItem('bni_ascend_attendees') || '[]');
       const tbody = document.getElementById('attendeesTableBody');
-      document.getElementById('attendeeCount').innerText = `Total Registrations: ${list.length}`;
+      document.getElementById('attendeeCount').innerText = `Total on this device: ${list.length}`;
       tbody.innerHTML = '';
 
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px; color:#888;">No registrations recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding: 20px; color:#888;">No registrations recorded on this browser yet. Check your Master Google Sheet for global attendee entries!</td></tr>';
         return;
       }
 
@@ -568,7 +596,7 @@
     function exportToExcel() {
       const list = JSON.parse(localStorage.getItem('bni_ascend_attendees') || '[]');
       if (list.length === 0) {
-        alert("No attendee registrations available to export.");
+        alert("No attendee registrations available on this device to export. Please open your Google Sheet for the master list.");
         return;
       }
 
@@ -585,7 +613,6 @@
 
       const worksheet = XLSX.utils.json_to_sheet(formatted);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Attendees");
       XLSX.writeFile(workbook, "BNI_ASCEND_Registrations.xlsx");
     }
   </script>
