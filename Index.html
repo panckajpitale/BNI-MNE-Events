@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BNI Mumbai Northeast | Leadership & Events Portal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- SheetJS (xlsx) for direct genuine Excel file export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    /* Strict Arial font requirement throughout */
+    *, *::before, *::after {
+      font-family: Arial, Helvetica, sans-serif !important;
+    }
+
+    /* BNI Signature Color Tokens */
+    :root {
+      --bni-crimson: #cf102d;
+      --bni-crimson-hover: #b30e27;
+      --bni-charcoal: #1f2937;
+      --bni-slate: #374151;
+      --bni-soft-bg: #f8fafc;
+    }
+
+    .bg-crimson { background-color: var(--bni-crimson); }
+    .bg-crimson:hover { background-color: var(--bni-crimson-hover); }
+    .text-crimson { color: var(--bni-crimson); }
+    .border-crimson { border-color: var(--bni-crimson); }
+    .ring-crimson { --tw-ring-color: #cf102d; }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .smooth-transition { transition: all 0.25s ease-in-out; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-red-700 selection:text-white">
+
+  <!-- Top Global Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Identifier (No Logo Used) -->
+      <a href="#events" class="flex items-center space-x-3 cursor-pointer group">
+        <div class="w-10 h-10 rounded-lg bg-crimson flex items-center justify-center text-white font-black text-xl shadow-xs group-hover:scale-105 transition-transform">
+          A
+        </div>
+        <div>
+          <span class="text-[11px] uppercase tracking-widest font-black text-red-700 block leading-tight">BNI Mumbai Northeast</span>
+          <span class="text-sm font-black text-slate-900 tracking-tight">DNA Leadership & Events Portal</span>
+        </div>
+      </a>
+
+      <!-- Navigation & Mode Switcher -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <button 
+          id="publicEventsNavBtn"
+          onclick="navigateTo('events')"
+          class="px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+          Browse Events
+        </button>
+
+        <!-- Organizer Mode Button -->
+        <button 
+          id="adminToggleBtn"
+          onclick="handleAdminAuthToggle()"
+          class="inline-flex items-center px-3.5 py-1.5 text-xs font-bold rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-xs transition active:scale-95">
+          <svg class="w-3.5 h-3.5 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          <span id="adminBtnLabel">Organizer Login</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-grow">
+
+    <!-- VIEW 1: REGISTRATION FORM FOR SPECIFIC EVENT -->
+    <section id="registrationView" class="hidden pb-16">
+      
+      <!-- Event Hero Banner -->
+      <div class="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 text-white pt-10 pb-24 px-4 sm:px-6 relative overflow-hidden">
+        <div class="absolute -top-32 -right-32 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+          <div class="inline-flex items-center space-x-2 bg-red-950/70 border border-red-600/30 text-red-300 px-3.5 py-1 rounded-full text-xs font-bold tracking-wide uppercase mb-3">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span id="heroCategory">BNI Mumbai Northeast • DNA Team</span>
+          </div>
+          <h1 id="heroEventTitle" class="text-3xl sm:text-5xl font-black uppercase tracking-tight leading-tight">
+            ASCEND
+          </h1>
+          <p id="heroEventTagline" class="text-lg sm:text-2xl text-red-400 font-bold tracking-wide uppercase mt-1 mb-3">
+            Lead. Align. Accelerate.
+          </p>
+          <p id="heroEventDescription" class="text-slate-300 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+            True leadership doesn’t just transform your chapter—it builds the foundation to rapidly scale your own business.
+          </p>
+
+          <div id="heroNoticeBanner" class="mt-4 inline-block bg-amber-500/15 border border-amber-500/30 text-amber-200 px-4 py-1.5 rounded-lg text-xs font-semibold">
+            ⚠️ Mandatory attendance for Support, Launch, Training & RST teams
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Facts Card (Floating) -->
+      <div class="max-w-4xl mx-auto px-4 -mt-12 relative z-20">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-4 sm:p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+          <div class="pt-2 sm:pt-0 sm:px-2">
+            <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Date</div>
+            <div id="cardDate" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">24th October</div>
+          </div>
+          <div class="pt-2 sm:pt-0 sm:px-2">
+            <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Timing</div>
+            <div id="cardTime" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">10:00 AM – 6:00 PM</div>
+          </div>
+          <div class="pt-3 sm:pt-0 sm:px-2 col-span-2 sm:col-span-1">
+            <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Venue</div>
+            <div id="cardVenue" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">Vihang's Palm Club</div>
+          </div>
+          <div class="pt-3 sm:pt-0 sm:px-2 col-span-2 sm:col-span-1">
+            <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Investment</div>
+            <div id="cardFee" class="text-base sm:text-lg font-bold text-red-700 mt-0.5">₹2,250</div>
+            <div id="cardFeeSubtext" class="text-[10px] text-slate-500">Includes Lunch & High Tea</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Form Body -->
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-10">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-10 relative">
+          
+          <div class="border-b border-slate-100 pb-5 mb-6 flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-black text-slate-900 tracking-tight">Register for this Event</h2>
+              <p class="text-xs text-slate-500 mt-1">Please enter your verified details to confirm your seat.</p>
+            </div>
+            <button onclick="copyCurrentEventShareLink()" class="hidden sm:inline-flex items-center text-xs font-bold text-red-700 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition" title="Copy public share link for WhatsApp">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+              </svg>
+              Share Link
+            </button>
+          </div>
+
+          <!-- Submission Confirmation Screen -->
+          <div id="regSuccessCard" class="hidden mb-6 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl p-5">
+            <div class="flex items-start">
+              <svg class="w-6 h-6 text-emerald-600 mt-0.5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 class="font-bold text-base text-emerald-900">Registration Successfully Logged!</h3>
+                <p class="text-xs sm:text-sm text-emerald-800 mt-1" id="regSuccessSummary">
+                  Your seat confirmation is recorded.
+                </p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  <button onclick="resetRegistrationForm()" class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition">
+                    + Register Another Member
+                  </button>
+                  <button onclick="navigateTo('events')" class="px-3.5 py-1.5 bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-100 rounded-lg text-xs font-bold transition">
+                    Back to All Events
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- The Registration Form -->
+          <form id="publicRegForm" onsubmit="handlePublicRegistration(event)" class="space-y-5">
+            <input type="hidden" id="formEventId" value="">
+
+            <!-- Attendee Name -->
+            <div>
+              <label for="regFullName" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                Full Name of Attendee <span class="text-red-600">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="regFullName" 
+                required 
+                placeholder="e.g., Rajesh Sharma"
+                class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden transition"
+              >
+            </div>
+
+            <!-- Designation & Department Dropdowns -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="regDesignation" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                  Designation <span class="text-red-600">*</span>
+                </label>
+                <select 
+                  id="regDesignation" 
+                  required 
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden bg-white transition cursor-pointer"
+                >
+                  <option value="" disabled selected>Select Designation</option>
+                  <option value="AD">Area Director (AD)</option>
+                  <option value="SDC">Senior Director Consultant (SDC)</option>
+                  <option value="DC">Director Consultant (DC)</option>
+                  <option value="Ambassador">Ambassador</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="regDepartment" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                  Department <span class="text-red-600">*</span>
+                </label>
+                <select 
+                  id="regDepartment" 
+                  required 
+                  onchange="toggleSupportChapterField(this.value)"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden bg-white transition cursor-pointer"
+                >
+                  <option value="" disabled selected>Select Department</option>
+                  <option value="Launch">Launch</option>
+                  <option value="Support">Support</option>
+                  <option value="Training">Training</option>
+                  <option value="RST">RST</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Home Chapter Name (strictly neutral wording) -->
+            <div>
+              <label for="regHomeChapter" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1">
+                Your Home Chapter Name <span class="text-red-600">*</span>
+              </label>
+              <p class="text-[11px] text-slate-500 mb-1.5">Enter your membership chapter</p>
+              <input 
+                type="text" 
+                id="regHomeChapter" 
+                required 
+                placeholder="Your membership chapter"
+                class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden transition"
+              >
+            </div>
+
+            <!-- Support Chapter Name (Conditional: Only for Support Dept) -->
+            <div id="supportChapterBlock" class="hidden smooth-transition">
+              <div class="bg-red-50/70 border border-red-200 rounded-xl p-4">
+                <label for="regSupportChapter" class="block text-xs uppercase tracking-wider font-bold text-slate-900 mb-1">
+                  Your Support Chapter Name <span class="text-red-600">*</span>
+                </label>
+                <p class="text-xs text-slate-500 mb-2">Applicable only to Support Department leaders.</p>
+                <input 
+                  type="text" 
+                  id="regSupportChapter" 
+                  placeholder="Enter the chapter you actively support"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-red-300 bg-white focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden transition"
+                >
+              </div>
+            </div>
+
+            <!-- Optional Contact Information -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="regPhone" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                  Mobile Number (WhatsApp)
+                </label>
+                <input 
+                  type="tel" 
+                  id="regPhone" 
+                  placeholder="10-digit number"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden transition"
+                >
+              </div>
+              <div>
+                <label for="regEmail" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                  Email Address
+                </label>
+                <input 
+                  type="email" 
+                  id="regEmail" 
+                  placeholder="yourname@business.com"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm outline-hidden transition"
+                >
+              </div>
+            </div>
+
+            <!-- Payment & Transaction ID -->
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-5">
+              <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-200">
+                <span class="text-xs font-bold uppercase text-slate-700">Workshop Investment</span>
+                <span id="formInvestmentDisplay" class="text-sm font-extrabold text-red-700">₹2,250</span>
+              </div>
+              <p class="text-xs text-slate-600 mb-3 leading-relaxed">
+                Please transfer the registration investment via your chapter payment link / UPI, then provide the UTR or Transaction reference number below.
+              </p>
+              <div>
+                <label for="regTxnId" class="block text-xs uppercase tracking-wider font-bold text-slate-700 mb-1.5">
+                  Transaction ID / UTR of Payment <span class="text-red-600">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="regTxnId" 
+                  required 
+                  placeholder="e.g., UPI / IMPS / Reference ID"
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-slate-800 text-sm uppercase font-mono tracking-wider outline-hidden bg-white transition"
+                >
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-2">
+              <button 
+                type="submit" 
+                id="submitRegBtn"
+                class="w-full py-3.5 px-6 bg-crimson text-white font-bold text-sm sm:text-base rounded-xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center space-x-2"
+              >
+                <span>Confirm & Complete Registration</span>
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- VIEW 2: PUBLIC EVENTS DIRECTORY -->
+    <section id="eventsDirectoryView" class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">BNI Mumbai Northeast Events</h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">Select an active leadership event below to view details and register.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <input 
+            type="text" 
+            id="eventSearchBox" 
+            oninput="renderPublicEventsList()"
+            placeholder="Search events..." 
+            class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:outline-hidden focus:border-red-600"
+          >
+        </div>
+      </div>
+
+      <!-- Events Grid -->
+      <div id="publicEventsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 3: ORGANIZER ADMIN DASHBOARD -->
+    <section id="adminDashboardView" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- Dashboard Header -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 mb-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-red-100 text-red-800">Organizer Mode</span>
+            <span class="text-xs text-slate-400">• Authenticated</span>
+          </div>
+          <h1 class="text-2xl font-black text-slate-900 mt-1">Regional Event Management Suite</h1>
+          <p class="text-xs text-slate-500">Create new events, grab WhatsApp-ready registration links, and export master attendee data to Excel.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button 
+            onclick="openCreateEventModal()" 
+            class="px-4 py-2 bg-crimson text-white rounded-lg text-xs font-bold shadow-xs hover:bg-crimson-hover transition active:scale-95 flex items-center space-x-1.5"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Create New Event</span>
+          </button>
+
+          <button 
+            onclick="openSyncBridgeModal()" 
+            class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-300 transition"
+            title="Google Sheets & GitHub Pages Live Webhook Setup"
+          >
+            Google Sheets Bridge
+          </button>
+
+          <button 
+            onclick="handleOrganizerLogout()" 
+            class="px-3 py-2 text-slate-500 hover:text-red-700 rounded-lg text-xs font-bold transition"
+          >
+            Exit Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Counters -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-[11px] font-bold text-slate-400 uppercase">Total Events</div>
+          <div id="statTotalEvents" class="text-2xl font-black text-slate-900 mt-1">1</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-[11px] font-bold text-slate-400 uppercase">Total Registrations</div>
+          <div id="statTotalRegistrations" class="text-2xl font-black text-red-700 mt-1">0</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-[11px] font-bold text-slate-400 uppercase">Support Leaders</div>
+          <div id="statSupportCount" class="text-2xl font-black text-slate-900 mt-1">0</div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div class="text-[11px] font-bold text-slate-400 uppercase">Total Fees Logged</div>
+          <div id="statFeesCount" class="text-2xl font-black text-emerald-700 mt-1">₹0</div>
+        </div>
+      </div>
+
+      <!-- Tabs: Events Management vs Master Registrations -->
+      <div class="space-y-6">
+        
+        <!-- Section A: Managed Events Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-black text-slate-900">Configured Regional Events</h2>
+              <p class="text-xs text-slate-500">Each event has a unique public link you can share directly in chapter groups.</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-slate-600 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                  <th class="py-3 px-4">Event Title</th>
+                  <th class="py-3 px-4">Date & Time</th>
+                  <th class="py-3 px-4">Venue</th>
+                  <th class="py-3 px-4">Investment</th>
+                  <th class="py-3 px-4 text-center">Registrations</th>
+                  <th class="py-3 px-4 text-right">Actions & Share Link</th>
+                </tr>
+              </thead>
+              <tbody id="adminEventsTableBody" class="divide-y divide-slate-100">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section B: Attendee Database & Excel Export -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div class="p-5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-black text-slate-900">Master Attendee Registrations</h2>
+              <p class="text-xs text-slate-500">Filter across designations, departments, or specific events.</p>
+            </div>
+
+            <!-- Filters & Export Toolbar -->
+            <div class="flex flex-wrap items-center gap-2">
+              <select 
+                id="filterEventSelect" 
+                onchange="renderAdminRegistrationsTable()" 
+                class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white"
+              >
+                <option value="all">All Events</option>
+              </select>
+
+              <select 
+                id="filterDeptSelect" 
+                onchange="renderAdminRegistrationsTable()" 
+                class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white"
+              >
+                <option value="all">All Departments</option>
+                <option value="Launch">Launch</option>
+                <option value="Support">Support</option>
+                <option value="Training">Training</option>
+                <option value="RST">RST</option>
+              </select>
+
+              <input 
+                type="text" 
+                id="searchAttendeeInput" 
+                oninput="renderAdminRegistrationsTable()" 
+                placeholder="Search attendee, chapter, UTR..." 
+                class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 focus:border-red-600 focus:outline-hidden"
+              >
+
+              <!-- Excel (.xlsx) Export Button -->
+              <button 
+                onclick="exportSelectedToExcel()" 
+                class="px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition flex items-center space-x-1"
+                title="Download genuine Excel spreadsheet"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Export Excel</span>
+              </button>
+
+              <button 
+                onclick="exportSelectedToCSV()" 
+                class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-300 transition"
+              >
+                CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Attendees Table View -->
+          <div class="overflow-x-auto max-h-[500px]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="sticky top-0 bg-slate-50 z-10">
+                <tr class="text-slate-600 uppercase font-bold text-[10px] tracking-wider border-b border-slate-200">
+                  <th class="py-3 px-3">#</th>
+                  <th class="py-3 px-3">Attendee Name</th>
+                  <th class="py-3 px-3">Event</th>
+                  <th class="py-3 px-3">Designation</th>
+                  <th class="py-3 px-3">Department</th>
+                  <th class="py-3 px-3">Home Chapter</th>
+                  <th class="py-3 px-3">Support Chapter</th>
+                  <th class="py-3 px-3 font-mono">Transaction ID / UTR</th>
+                  <th class="py-3 px-3">Phone</th>
+                  <th class="py-3 px-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminAttendeesTableBody" class="divide-y divide-slate-100">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+
+          <div id="adminEmptyAttendeeNotice" class="hidden text-center py-12 text-slate-400 text-xs">
+            No registration records found matching the chosen criteria.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: Organizer Passcode Gate -->
+  <div id="adminAuthModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center">
+      <div class="w-12 h-12 rounded-full bg-red-100 text-red-700 mx-auto flex items-center justify-center mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-black text-slate-900">Organizer Verification</h3>
+      <p class="text-xs text-slate-500 mt-1 mb-4">Enter organizer PIN to manage events and download attendee spreadsheets.</p>
+      
+      <form onsubmit="verifyOrganizerPin(event)">
+        <input 
+          type="password" 
+          id="organizerPinInput" 
+          required 
+          placeholder="Enter PIN (Default: 1985)"
+          class="w-full text-center px-4 py-2.5 rounded-lg border border-slate-300 focus:border-red-600 focus:ring-2 focus:ring-red-100 text-base font-mono tracking-widest outline-hidden mb-4"
+        >
+        <div class="flex items-center space-x-2">
+          <button type="button" onclick="closeAdminAuthModal()" class="w-1/2 py-2 text-xs font-bold rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="w-1/2 py-2 text-xs font-bold rounded-lg bg-crimson hover:bg-crimson-hover text-white">Unlock</button>
+        </div>
+      </form>
+      <p class="text-[10px] text-slate-400 mt-3">Default master PIN is <span class="font-mono font-bold text-slate-700">1985</span></p>
+    </div>
+  </div>
+
+  <!-- MODAL: Create New Event -->
+  <div id="createEventModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 my-8">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <h3 class="text-lg font-black text-slate-900">Create New Event</h3>
+          <p class="text-xs text-slate-500">Configure event details and automatically generate a shareable registration link.</p>
+        </div>
+        <button onclick="closeCreateEventModal()" class="text-slate-400 hover:text-slate-700 p-1">✕</button>
+      </div>
+
+      <form id="createEventForm" onsubmit="handleCreateEventSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Event Title <span class="text-red-600">*</span></label>
+          <input type="text" id="newEventTitle" required placeholder="e.g., CATALYST: High Performance Leadership" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Tagline</label>
+          <input type="text" id="newEventTagline" placeholder="e.g., Strategy, Culture & Chapter Acceleration" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Date <span class="text-red-600">*</span></label>
+            <input type="text" id="newEventDate" required placeholder="e.g., 28th November" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+          </div>
+          <div>
+            <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Timing <span class="text-red-600">*</span></label>
+            <input type="text" id="newEventTime" required placeholder="e.g., 10:00 AM – 5:30 PM" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Venue <span class="text-red-600">*</span></label>
+            <input type="text" id="newEventVenue" required placeholder="e.g., The Fern, Chembur" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+          </div>
+          <div>
+            <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Investment / Fee <span class="text-red-600">*</span></label>
+            <input type="text" id="newEventFee" required placeholder="e.g., ₹2,250" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Fee Inclusions Subtext</label>
+          <input type="text" id="newEventFeeSubtext" placeholder="e.g., Includes Lunch & High Tea" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Description / Growth Pitch</label>
+          <textarea id="newEventDesc" rows="2" placeholder="Brief outline on how this event will help attendees scale both chapter and personal business..." class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs uppercase font-bold text-slate-700 mb-1">Target Attendees / Mandatory Notice</label>
+          <input type="text" id="newEventNotice" placeholder="e.g., Mandatory attendance for Support & Launch Teams" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 focus:border-red-600 outline-hidden">
+        </div>
+
+        <div class="pt-3 flex justify-end space-x-2 border-t border-slate-100">
+          <button type="button" onclick="closeCreateEventModal()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-xs font-bold bg-crimson hover:bg-crimson-hover text-white rounded-lg shadow-xs">Publish Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Google Sheets & GitHub Bridge Helper -->
+  <div id="syncBridgeModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 my-8">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <h3 class="text-base font-black text-slate-900">GitHub Pages & Google Sheets Bridge</h3>
+          <p class="text-xs text-slate-500">How to collect submissions from hundreds of phones into one master Google Sheet for free.</p>
+        </div>
+        <button onclick="closeSyncBridgeModal()" class="text-slate-400 hover:text-slate-700 p-1">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-600 leading-relaxed">
+        <div class="bg-amber-50 border border-amber-200 p-3 rounded-lg text-amber-900">
+          <span class="font-bold">Hosting on GitHub Pages:</span> Simply name this file <code class="font-mono font-bold">index.html</code>, push it to your GitHub repository, and turn on <em>Settings ➔ Pages</em>. Your link will look like: <br><code class="font-mono text-xs text-slate-800">https://yourname.github.io/event-hub/#register?id=ascend2026</code>.
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-800 mb-1">Optional: Live Auto-Sync to Google Sheets</h4>
+          <p>If you'd like registrations submitted by attendees on their phones to instantly append as a new row in your central Google Sheet in real-time, copy this Google Apps Script into your Sheet:</p>
+          <pre class="bg-slate-900 text-slate-200 p-3 rounded-lg font-mono text-[11px] overflow-x-auto mt-2 select-all">
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    new Date(), 
+    data.eventTitle, 
+    data.fullName, 
+    data.designation, 
+    data.department, 
+    data.homeChapter, 
+    data.supportChapter, 
+    data.transactionId, 
+    data.phone, 
+    data.email
+  ]);
+  return ContentService.createTextOutput(JSON.stringify({"status":"success"})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-800 mb-1">Your Google Apps Script Webhook URL (Optional):</label>
+          <div class="flex space-x-2">
+            <input 
+              type="url" 
+              id="webhookUrlInput" 
+              placeholder="https://script.google.com/macros/s/.../exec"
+              class="w-full px-3 py-1.5 text-xs rounded border border-slate-300 font-mono"
+            >
+            <button onclick="saveWebhookUrl()" class="px-3 py-1.5 bg-slate-800 text-white font-bold rounded text-xs">Save</button>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">When saved, every form submission on this site will also beam directly into your sheet.</p>
+        </div>
+
+        <!-- JSON Backup & Restore -->
+        <div class="border-t border-slate-200 pt-3 flex flex-wrap gap-2 justify-between items-center">
+          <span class="font-bold text-slate-700">Database Backup:</span>
+          <div class="space-x-2">
+            <button onclick="exportBackupJSON()" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-300 font-bold">Download JSON Backup</button>
+            <label class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-300 font-bold cursor-pointer inline-block">
+              Import JSON
+              <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Box (No alerts) -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs sm:text-sm font-semibold border border-slate-700">
+      <span id="toastIcon" class="text-emerald-400 font-bold">✓</span>
+      <span id="toastMessage">Success</span>
+    </div>
+  </div>
+
+  <!-- Page Global Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-12">
+    <div class="max-w-4xl mx-auto px-4">
+      <p class="font-bold text-slate-700">BNI Mumbai Northeast • Leadership Operations</p>
+      <p class="mt-1 text-slate-400">Works across phones, tablets, and laptops. Ready for GitHub Pages hosting.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Storage Keys
+    const STORAGE_KEY_EVENTS = 'bni_mne_events_store_v1';
+    const STORAGE_KEY_REGISTRATIONS = 'bni_mne_registrations_store_v1';
+    const STORAGE_KEY_WEBHOOK = 'bni_mne_webhook_url_v1';
+    const MASTER_ORGANIZER_PIN = '1985';
+
+    // Application State
+    let eventsList = [];
+    let registrationsList = [];
+    let currentEventId = 'ascend2026';
+    let isOrganizerAuth = false;
+
+    // Default Seed Events (Starting with ASCEND)
+    const DEFAULT_SEED_EVENTS = [
+      {
+        id: 'ascend2026',
+        title: 'ASCEND',
+        tagline: 'Lead. Align. Accelerate.',
+        date: '24th October',
+        time: '10:00 AM – 6:00 PM',
+        venue: "Vihang's Palm Club",
+        fee: '₹2,250',
+        feeSubtext: 'Includes Lunch & High Tea',
+        description: 'True leadership doesn’t just transform your chapter—it builds the operational and strategic muscle to scale your own business. Join us for an intensive, high-impact day designed to sharpen your strategic edge.',
+        notice: 'Mandatory attendance for Support, Launch, Training & RST teams',
+        status: 'Active'
+      }
+    ];
+
+    // Seed registrations
+    const DEFAULT_SEED_REGISTRATIONS = [
+      {
+        id: 'REG-101',
+        eventId: 'ascend2026',
+        eventTitle: 'ASCEND',
+        timestamp: '24/10/2026, 10:15 AM',
+        fullName: 'Sameer Kulkarni',
+        designation: 'SDC',
+        department: 'Support',
+        homeChapter: 'Synergy',
+        supportChapter: 'Champions',
+        transactionId: 'UPI93820194883',
+        phone: '9820011223',
+        email: 'sameer.k@example.com'
+      },
+      {
+        id: 'REG-102',
+        eventId: 'ascend2026',
+        eventTitle: 'ASCEND',
+        timestamp: '24/10/2026, 11:30 AM',
+        fullName: 'Pooja Mehta',
+        designation: 'Ambassador',
+        department: 'Training',
+        homeChapter: 'Titans',
+        supportChapter: 'N/A',
+        transactionId: 'HDFC839281928',
+        phone: '9819922334',
+        email: 'pooja.m@example.com'
+      }
+    ];
+
+    // Initialization on Page Load
+    window.onload = function() {
+      loadDataFromStorage();
+      setupHashRouter();
+      updateDashboardMetrics();
+    };
+
+    window.onhashchange = function() {
+      setupHashRouter();
+    };
+
+    // Load & Persist Store
+    function loadDataFromStorage() {
+      try {
+        const storedEvents = localStorage.getItem(STORAGE_KEY_EVENTS);
+        eventsList = storedEvents ? JSON.parse(storedEvents) : [...DEFAULT_SEED_EVENTS];
+        if (!eventsList || eventsList.length === 0) eventsList = [...DEFAULT_SEED_EVENTS];
+
+        const storedRegs = localStorage.getItem(STORAGE_KEY_REGISTRATIONS);
+        registrationsList = storedRegs ? JSON.parse(storedRegs) : [...DEFAULT_SEED_REGISTRATIONS];
+      } catch (e) {
+        console.error('Storage parse error, resetting state:', e);
+        eventsList = [...DEFAULT_SEED_EVENTS];
+        registrationsList = [...DEFAULT_SEED_REGISTRATIONS];
+      }
+
+      // Check for saved webhook
+      const savedWebhook = localStorage.getItem(STORAGE_KEY_WEBHOOK);
+      if (savedWebhook && document.getElementById('webhookUrlInput')) {
+        document.getElementById('webhookUrlInput').value = savedWebhook;
+      }
+    }
+
+    function saveDataToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY_EVENTS, JSON.stringify(eventsList));
+        localStorage.setItem(STORAGE_KEY_REGISTRATIONS, JSON.stringify(registrationsList));
+        updateDashboardMetrics();
+      } catch (e) {
+        console.error('Could not save data:', e);
+      }
+    }
+
+    // Hash Router: Supports #events, #dashboard, and #register?id=...
+    function setupHashRouter() {
+      const hash = window.location.hash || '#events';
+
+      if (hash.startsWith('#register')) {
+        // Extract Event ID from hash
+        const parts = hash.split('?id=');
+        const eventId = parts.length > 1 ? parts[1] : (eventsList[0] ? eventsList[0].id : 'ascend2026');
+        showRegistrationView(eventId);
+      } else if (hash === '#dashboard') {
+        if (isOrganizerAuth) {
+          showAdminDashboard();
+        } else {
+          openAdminAuthModal();
+        }
+      } else {
+        showEventsDirectoryView();
+      }
+    }
+
+    function navigateTo(route) {
+      if (route === 'events') {
+        window.location.hash = '#events';
+      } else if (route === 'dashboard') {
+        window.location.hash = '#dashboard';
+      }
+    }
+
+    // View Switching
+    function hideAllViews() {
+      document.getElementById('registrationView').classList.add('hidden');
+      document.getElementById('eventsDirectoryView').classList.add('hidden');
+      document.getElementById('adminDashboardView').classList.add('hidden');
+    }
+
+    function showRegistrationView(eventId) {
+      hideAllViews();
+      const targetEvent = eventsList.find(e => e.id === eventId) || eventsList[0];
+      if (!targetEvent) return;
+
+      currentEventId = targetEvent.id;
+      document.getElementById('formEventId').value = targetEvent.id;
+      document.getElementById('heroEventTitle').innerText = targetEvent.title;
+      document.getElementById('heroEventTagline').innerText = targetEvent.tagline || '';
+      document.getElementById('heroEventDescription').innerText = targetEvent.description || '';
+      document.getElementById('heroNoticeBanner').innerText = '⚠️ ' + (targetEvent.notice || 'Mandatory attendance for DNA leaders');
+
+      document.getElementById('cardDate').innerText = targetEvent.date;
+      document.getElementById('cardTime').innerText = targetEvent.time;
+      document.getElementById('cardVenue').innerText = targetEvent.venue;
+      document.getElementById('cardFee').innerText = targetEvent.fee;
+      document.getElementById('cardFeeSubtext').innerText = targetEvent.feeSubtext || 'Includes Lunch & High Tea';
+      document.getElementById('formInvestmentDisplay').innerText = targetEvent.fee;
+
+      // Reset form states
+      resetRegistrationForm();
+
+      document.getElementById('registrationView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showEventsDirectoryView() {
+      hideAllViews();
+      renderPublicEventsList();
+      document.getElementById('eventsDirectoryView').classList.remove('hidden');
+    }
+
+    function showAdminDashboard() {
+      hideAllViews();
+      renderAdminEventsTable();
+      populateAdminFilters();
+      renderAdminRegistrationsTable();
+      updateDashboardMetrics();
+      document.getElementById('adminDashboardView').classList.remove('hidden');
+    }
+
+    function toggleSupportChapterField(selectedDept) {
+      const container = document.getElementById('supportChapterBlock');
+      const input = document.getElementById('regSupportChapter');
+
+      if (selectedDept === 'Support') {
+        container.classList.remove('hidden');
+        input.setAttribute('required', 'required');
+      } else {
+        container.classList.add('hidden');
+        input.removeAttribute('required');
+        input.value = '';
+      }
+    }
+
+    // Public Registration Submission Handler
+    function handlePublicRegistration(event) {
+      event.preventDefault();
+
+      const eventId = document.getElementById('formEventId').value || currentEventId;
+      const targetEvent = eventsList.find(e => e.id === eventId) || { title: 'BNI Event' };
+
+      const fullName = document.getElementById('regFullName').value.trim();
+      const designation = document.getElementById('regDesignation').value;
+      const department = document.getElementById('regDepartment').value;
+      const homeChapter = document.getElementById('regHomeChapter').value.trim();
+      const supportChapter = document.getElementById('regSupportChapter').value.trim();
+      const phone = document.getElementById('regPhone').value.trim() || 'N/A';
+      const email = document.getElementById('regEmail').value.trim() || 'N/A';
+      const transactionId = document.getElementById('regTxnId').value.trim();
+
+      if (!fullName || !designation || !department || !homeChapter || !transactionId) {
+        showToast('Please fill all mandatory fields.', '⚠️');
+        return;
+      }
+
+      if (department === 'Support' && !supportChapter) {
+        showToast('Please enter your Support Chapter name.', '⚠️');
+        return;
+      }
+
+      // Check duplicates for this event
+      const existing = registrationsList.find(r => r.eventId === eventId && r.transactionId.toLowerCase() === transactionId.toLowerCase());
+      if (existing) {
+        showToast('This Transaction ID has already been recorded.', '⚠️');
+        return;
+      }
+
+      const newRegistration = {
+        id: 'REG-' + Date.now().toString(36).toUpperCase(),
+        eventId: eventId,
+        eventTitle: targetEvent.title,
+        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        fullName,
+        designation,
+        department,
+        homeChapter,
+        supportChapter: (department === 'Support') ? supportChapter : 'N/A',
+        transactionId,
+        phone,
+        email
+      };
+
+      registrationsList.unshift(newRegistration);
+      saveDataToStorage();
+
+      // Send to Google Sheets Webhook if configured
+      triggerGoogleSheetsSync(newRegistration);
+
+      // Show confirmation state
+      document.getElementById('publicRegForm').classList.add('hidden');
+      document.getElementById('regSuccessSummary').innerText = 
+        `Thank you ${fullName}! Your registration for ${targetEvent.title} (${designation}, ${department} Dept, Chapter: ${homeChapter}) is saved with Txn ID: ${transactionId}.`;
+      document.getElementById('regSuccessCard').classList.remove('hidden');
+
+      showToast('Registration submitted successfully!', '✓');
+    }
+
+    function resetRegistrationForm() {
+      document.getElementById('publicRegForm').reset();
+      toggleSupportChapterField('');
+      document.getElementById('regSuccessCard').classList.add('hidden');
+      document.getElementById('publicRegForm').classList.remove('hidden');
+    }
+
+    function renderPublicEventsList() {
+      const grid = document.getElementById('publicEventsGrid');
+      const query = (document.getElementById('eventSearchBox').value || '').toLowerCase().trim();
+      grid.innerHTML = '';
+
+      const filtered = eventsList.filter(e => 
+        e.title.toLowerCase().includes(query) || 
+        (e.tagline && e.tagline.toLowerCase().includes(query)) ||
+        e.venue.toLowerCase().includes(query)
+      );
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">No events found.</div>`;
+        return;
+      }
+
+      filtered.forEach(evt => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-slate-200 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between';
+        
+        card.innerHTML = `
+          <div class="p-5 sm:p-6">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] uppercase font-black tracking-wider px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">
+                ${evt.status || 'Active'}
+              </span>
+              <span class="text-xs font-bold text-red-700">${evt.fee}</span>
+            </div>
+            <h3 class="text-lg font-black text-slate-900 tracking-tight leading-snug">${escapeHtml(evt.title)}</h3>
+            <p class="text-xs text-red-600 font-bold uppercase tracking-wide mt-0.5 mb-2">${escapeHtml(evt.tagline || '')}</p>
+            <p class="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">${escapeHtml(evt.description || '')}</p>
+
+            <div class="space-y-1.5 text-xs text-slate-600 border-t border-slate-100 pt-3">
+              <div class="flex items-center">
+                <svg class="w-3.5 h-3.5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span>${escapeHtml(evt.date)} • ${escapeHtml(evt.time)}</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-3.5 h-3.5 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="truncate">${escapeHtml(evt.venue)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <button 
+              onclick="copyShareLinkForEvent('${evt.id}')" 
+              class="text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center"
+              title="Copy link for WhatsApp"
+            >
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              Copy Link
+            </button>
+            <a 
+              href="#register?id=${evt.id}" 
+              class="px-4 py-2 bg-crimson hover:bg-crimson-hover text-white text-xs font-bold rounded-lg transition"
+            >
+              Register Now →
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function handleAdminAuthToggle() {
+      if (isOrganizerAuth) {
+        navigateTo('dashboard');
+      } else {
+        openAdminAuthModal();
+      }
+    }
+
+    function openAdminAuthModal() {
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('organizerPinInput').focus(), 100);
+    }
+
+    function closeAdminAuthModal() {
+      document.getElementById('adminAuthModal').classList.add('hidden');
+      document.getElementById('organizerPinInput').value = '';
+    }
+
+    function verifyOrganizerPin(event) {
+      event.preventDefault();
+      const enteredPin = document.getElementById('organizerPinInput').value.trim();
+
+      if (enteredPin === MASTER_ORGANIZER_PIN) {
+        isOrganizerAuth = true;
+        closeAdminAuthModal();
+        document.getElementById('adminBtnLabel').innerText = 'Organizer Portal';
+        showToast('Organizer access granted', '✓');
+        navigateTo('dashboard');
+      } else {
+        showToast('Invalid PIN. Use default 1985.', '⚠️');
+      }
+    }
+
+    function handleOrganizerLogout() {
+      isOrganizerAuth = false;
+      document.getElementById('adminBtnLabel').innerText = 'Organizer Login';
+      showToast('Exited organizer mode', 'ℹ️');
+      navigateTo('events');
+    }
+
+    function updateDashboardMetrics() {
+      if (!document.getElementById('statTotalEvents')) return;
+
+      document.getElementById('statTotalEvents').innerText = eventsList.length;
+      document.getElementById('statTotalRegistrations').innerText = registrationsList.length;
+
+      const supportCount = registrationsList.filter(r => r.department === 'Support').length;
+      document.getElementById('statSupportCount').innerText = supportCount;
+
+      const approxTotal = registrationsList.length * 2250;
+      document.getElementById('statFeesCount').innerText = '₹' + approxTotal.toLocaleString('en-IN');
+    }
+
+    function renderAdminEventsTable() {
+      const tbody = document.getElementById('adminEventsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      eventsList.forEach(evt => {
+        const count = registrationsList.filter(r => r.eventId === evt.id).length;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-bold text-slate-900">
+            <div>${escapeHtml(evt.title)}</div>
+            <div class="text-[11px] text-red-600 font-semibold">${escapeHtml(evt.tagline || '')}</div>
+          </td>
+          <td class="py-3 px-4 text-slate-700 font-medium">
+            ${escapeHtml(evt.date)}<br>
+            <span class="text-slate-400 text-[11px]">${escapeHtml(evt.time)}</span>
+          </td>
+          <td class="py-3 px-4 text-slate-600">${escapeHtml(evt.venue)}</td>
+          <td class="py-3 px-4 text-red-700 font-bold">${escapeHtml(evt.fee)}</td>
+          <td class="py-3 px-4 text-center">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${count > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+              ${count}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-right space-x-1.5 whitespace-nowrap">
+            <button 
+              onclick="copyShareLinkForEvent('${evt.id}')" 
+              class="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-800 rounded font-bold transition"
+              title="Copy WhatsApp Registration Link"
+            >
+              Copy Link
+            </button>
+            <a 
+              href="#register?id=${evt.id}" 
+              class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-bold transition"
+            >
+              Open Form
+            </a>
+            ${evt.id !== 'ascend2026' ? `
+              <button 
+                onclick="deleteEvent('${evt.id}')" 
+                class="p-1 text-slate-400 hover:text-red-700 transition" 
+                title="Delete Event"
+              >
+                ✕
+              </button>
+            ` : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateAdminFilters() {
+      const select = document.getElementById('filterEventSelect');
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = '<option value="all">All Events</option>';
+
+      eventsList.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.id;
+        opt.innerText = e.title;
+        select.appendChild(opt);
+      });
+
+      if (currentVal) select.value = currentVal;
+    }
+
+    function renderAdminRegistrationsTable() {
+      const tbody = document.getElementById('adminAttendeesTableBody');
+      const emptyNotice = document.getElementById('adminEmptyAttendeeNotice');
+      if (!tbody) return;
+
+      const eventFilter = document.getElementById('filterEventSelect').value;
+      const deptFilter = document.getElementById('filterDeptSelect').value;
+      const query = (document.getElementById('searchAttendeeInput').value || '').toLowerCase().trim();
+
+      tbody.innerHTML = '';
+
+      const filtered = registrationsList.filter(item => {
+        const matchesEvent = eventFilter === 'all' || item.eventId === eventFilter;
+        const matchesDept = deptFilter === 'all' || item.department === deptFilter;
+        const matchesQuery = 
+          item.fullName.toLowerCase().includes(query) ||
+          item.homeChapter.toLowerCase().includes(query) ||
+          item.supportChapter.toLowerCase().includes(query) ||
+          item.transactionId.toLowerCase().includes(query);
+
+        return matchesEvent && matchesDept && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        emptyNotice.classList.remove('hidden');
+        return;
+      } else {
+        emptyNotice.classList.add('hidden');
+      }
+
+      filtered.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-slate-400 font-mono">${idx + 1}</td>
+          <td class="py-3 px-3 font-bold text-slate-900">${escapeHtml(r.fullName)}</td>
+          <td class="py-3 px-3 text-slate-600 font-medium">${escapeHtml(r.eventTitle || 'Event')}</td>
+          <td class="py-3 px-3"><span class="font-bold text-slate-800">${escapeHtml(r.designation)}</span></td>
+          <td class="py-3 px-3">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${r.department === 'Support' ? 'bg-red-100 text-red-800' : 'bg-slate-100 text-slate-700'}">
+              ${escapeHtml(r.department)}
+            </span>
+          </td>
+          <td class="py-3 px-3 font-semibold text-slate-800">${escapeHtml(r.homeChapter)}</td>
+          <td class="py-3 px-3 text-slate-600">${escapeHtml(r.supportChapter)}</td>
+          <td class="py-3 px-3 font-mono font-bold text-red-700">${escapeHtml(r.transactionId)}</td>
+          <td class="py-3 px-3 text-slate-500">${escapeHtml(r.phone)}</td>
+          <td class="py-3 px-3 text-right">
+            <button onclick="deleteRegistration('${r.id}')" class="text-slate-400 hover:text-red-700 p-1" title="Remove Record">
+              ✕
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function deleteRegistration(regId) {
+      registrationsList = registrationsList.filter(r => r.id !== regId);
+      saveDataToStorage();
+      renderAdminRegistrationsTable();
+      renderAdminEventsTable();
+      showToast('Registration record deleted', '✓');
+    }
+
+    function deleteEvent(evtId) {
+      eventsList = eventsList.filter(e => e.id !== evtId);
+      saveDataToStorage();
+      renderAdminEventsTable();
+      populateAdminFilters();
+      renderAdminRegistrationsTable();
+      showToast('Event removed', '✓');
+    }
+
+    function openCreateEventModal() {
+      document.getElementById('createEventModal').classList.remove('hidden');
+    }
+
+    function closeCreateEventModal() {
+      document.getElementById('createEventModal').classList.add('hidden');
+      document.getElementById('createEventForm').reset();
+    }
+
+    function handleCreateEventSubmit(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('newEventTitle').value.trim();
+      const tagline = document.getElementById('newEventTagline').value.trim();
+      const date = document.getElementById('newEventDate').value.trim();
+      const time = document.getElementById('newEventTime').value.trim();
+      const venue = document.getElementById('newEventVenue').value.trim();
+      const fee = document.getElementById('newEventFee').value.trim();
+      const feeSubtext = document.getElementById('newEventFeeSubtext').value.trim();
+      const desc = document.getElementById('newEventDesc').value.trim();
+      const notice = document.getElementById('newEventNotice').value.trim();
+
+      const id = 'evt_' + Date.now().toString(36).toLowerCase();
+
+      const newEvt = {
+        id,
+        title,
+        tagline,
+        date,
+        time,
+        venue,
+        fee,
+        feeSubtext: feeSubtext || 'Includes Refreshments',
+        description: desc,
+        notice: notice || 'Mandatory attendance for DNA leaders',
+        status: 'Active'
+      };
+
+      eventsList.unshift(newEvt);
+      saveDataToStorage();
+      closeCreateEventModal();
+      renderAdminEventsTable();
+      populateAdminFilters();
+      showToast('New event created! Share link generated.', '✓');
+    }
+
+    function exportSelectedToExcel() {
+      if (registrationsList.length === 0) {
+        showToast('No registrations found to export.', '⚠️');
+        return;
+      }
+
+      try {
+        const eventFilter = document.getElementById('filterEventSelect').value;
+        const deptFilter = document.getElementById('filterDeptSelect').value;
+
+        const dataToExport = registrationsList.filter(item => {
+          const mEvent = eventFilter === 'all' || item.eventId === eventFilter;
+          const mDept = deptFilter === 'all' || item.department === deptFilter;
+          return mEvent && mDept;
+        });
+
+        if (dataToExport.length === 0) {
+          showToast('No records match the active filters.', '⚠️');
+          return;
+        }
+
+        const rows = dataToExport.map((r, i) => ({
+          'Sr No.': i + 1,
+          'Registration Timestamp': r.timestamp,
+          'Event Name': r.eventTitle,
+          'Full Name of Attendee': r.fullName,
+          'Designation': r.designation,
+          'Department': r.department,
+          'Home Chapter (Membership)': r.homeChapter,
+          'Support Chapter Name': r.supportChapter || 'N/A',
+          'Transaction ID / UTR': r.transactionId,
+          'Contact Phone': r.phone || 'N/A',
+          'Email': r.email || 'N/A'
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(rows);
+
+        // Autofit column widths
+        ws['!cols'] = [
+          { wch: 8 },  // Sr No
+          { wch: 22 }, // Timestamp
+          { wch: 20 }, // Event
+          { wch: 26 }, // Full Name
+          { wch: 16 }, // Designation
+          { wch: 16 }, // Department
+          { wch: 24 }, // Home Chapter
+          { wch: 24 }, // Support Chapter
+          { wch: 26 }, // Txn ID
+          { wch: 16 }, // Phone
+          { wch: 26 }  // Email
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Attendee Roster');
+
+        const dateStamp = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `BNI_Northeast_Registrations_${dateStamp}.xlsx`);
+        showToast('Excel report downloaded!', '✓');
+      } catch (err) {
+        console.error('Excel generation error:', err);
+        showToast('Error exporting Excel sheet.', '⚠️');
+      }
+    }
+
+    function exportSelectedToCSV() {
+      if (registrationsList.length === 0) {
+        showToast('No registrations found.', '⚠️');
+        return;
+      }
+
+      const headers = ['Sr No', 'Timestamp', 'Event', 'Full Name', 'Designation', 'Department', 'Home Chapter', 'Support Chapter', 'Transaction ID', 'Phone', 'Email'];
+      const rows = registrationsList.map((r, i) => [
+        i + 1,
+        `"${(r.timestamp || '').replace(/"/g, '""')}"`,
+        `"${(r.eventTitle || '').replace(/"/g, '""')}"`,
+        `"${(r.fullName || '').replace(/"/g, '""')}"`,
+        `"${(r.designation || '').replace(/"/g, '""')}"`,
+        `"${(r.department || '').replace(/"/g, '""')}"`,
+        `"${(r.homeChapter || '').replace(/"/g, '""')}"`,
+        `"${(r.supportChapter || '').replace(/"/g, '""')}"`,
+        `"${(r.transactionId || '').replace(/"/g, '""')}"`,
+        `"${(r.phone || '').replace(/"/g, '""')}"`,
+        `"${(r.email || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `BNI_Registrations_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('CSV downloaded!', '✓');
+    }
+
+    function copyShareLinkForEvent(eventId) {
+      const base = window.location.origin + window.location.pathname;
+      const shareUrl = `${base}#register?id=${eventId}`;
+      copyStringToClipboard(shareUrl);
+      showToast('Registration link copied! Ready to paste into WhatsApp.', '📋');
+    }
+
+    function copyCurrentEventShareLink() {
+      copyShareLinkForEvent(currentEventId);
+    }
+
+    function copyStringToClipboard(str) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(str).catch(() => fallbackCopy(str));
+      } else {
+        fallbackCopy(str);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+    }
+
+    function openSyncBridgeModal() {
+      document.getElementById('syncBridgeModal').classList.remove('hidden');
+    }
+
+    function closeSyncBridgeModal() {
+      document.getElementById('syncBridgeModal').classList.add('hidden');
+    }
+
+    function saveWebhookUrl() {
+      const url = document.getElementById('webhookUrlInput').value.trim();
+      localStorage.setItem(STORAGE_KEY_WEBHOOK, url);
+      showToast('Google Sheets Webhook URL saved!', '✓');
+    }
+
+    function triggerGoogleSheetsSync(regData) {
+      const webhookUrl = localStorage.getItem(STORAGE_KEY_WEBHOOK);
+      if (!webhookUrl) return;
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(regData)
+      }).catch(err => console.log('Webhook background dispatch:', err));
+    }
+
+    function exportBackupJSON() {
+      const bundle = {
+        exportedAt: new Date().toISOString(),
+        events: eventsList,
+        registrations: registrationsList
+      };
+      const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `bni_events_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      showToast('Backup JSON downloaded!', '✓');
+    }
+
+    function importBackupJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (parsed.events) eventsList = parsed.events;
+          if (parsed.registrations) registrationsList = parsed.registrations;
+          saveDataToStorage();
+          setupHashRouter();
+          showToast('Backup restored successfully!', '✓');
+          closeSyncBridgeModal();
+        } catch (err) {
+          showToast('Invalid backup file format.', '⚠️');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Toast helper
+    function showToast(message, icon = '✓') {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = message;
+      toastIcon.innerText = icon;
+
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
